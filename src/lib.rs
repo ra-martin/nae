@@ -1,9 +1,9 @@
 mod app;
 mod input;
+pub mod m2d;
 mod random;
 mod res;
 pub mod tween;
-pub mod m2d;
 pub mod ui;
 
 pub use nae_derive::main;
