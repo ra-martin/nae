@@ -37,7 +37,8 @@ members = [
     "nae-core",
     "nae-backend",
     "nae-gfx",
-    "nae-shader"
+    "nae-shader",
+    "nae-audio"
 ]
 
 [profile.release]

@@ -283,7 +283,8 @@ where
 
         let mut time = Instant::now();
         time = time + Duration::from_secs_f32(1.0 / 60.0);
-        *control = ControlFlow::WaitUntil(time);
+        *control = ControlFlow::Poll;
+        // *control = ControlFlow::WaitUntil(time);
         //            *control = ControlFlow::Poll;
     });
 

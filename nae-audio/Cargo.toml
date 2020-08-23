@@ -1,0 +1,18 @@
+[package]
+name = "nae-audio"
+version = "0.1.0"
+authors = ["Nazarí González <nazari.nz@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+nae-core = { path = "../nae-core" }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2.55"
+js-sys = "0.3.30"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+#miniaudio = { path = "../../miniaudio-rs/miniaudio", features = ["ma-enable-dr-mp3"] }
+rodio = "0.11"

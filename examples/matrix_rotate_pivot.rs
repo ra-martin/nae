@@ -33,7 +33,7 @@ fn draw(app: &mut App, state: &mut State) {
 
     draw.end();
 
-    state.angle += 1.0 * math::PI / 180.0;
+    state.angle += 1.0 * std::f32::consts::PI / 180.0;
 }
 
 fn init(app: &mut App) -> State {

@@ -1,0 +1,16 @@
+# Things to do before release 0.0
+- Split draw / update because draw should be done by system and update should be fixed
+- Change name to notan
+- Add audio module
+- Shaders should load ShaderSource { gl300: Option<String>, spv: Option<String>, etc... }
+- Explain on the readme how to deploy to web and desktop
+- Provide a web template
+- Reddit post about "Please give me feedback: Notan a middle layer for multimedia apps and games"
+- Send emails asking for feedback. This should be first?
+- Github issues for:
+    - Move to multithreading using command buffers
+    - Port to WebGPU.rs for platforms that support's it
+    - UI module, custom or use/port iced? conrod?
+    - Tween paths
+    - Test coverage
+

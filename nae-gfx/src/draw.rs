@@ -178,6 +178,19 @@ impl Draw {
         self.push(&matrix4_translate(x, y, 0.0));
     }
 
+    pub fn push_rotation_from(&mut self, angle: f32, x: f32, y: f32) {
+        let m1 = matrix4_translate(x, y, 0.0);
+        let m2 = matrix4_rotation_z(angle);
+        let m3 = matrix4_translate(x * -1.0, y * -1.0, 0.0);
+
+        self.push(
+            &matrix4_mul_matrix4(
+                &matrix4_mul_matrix4(&m1, &m2),
+                &m3
+            )
+        );
+    }
+
     pub fn push_rotation(&mut self, angle: f32) {
         self.push(&matrix4_rotation_z(angle));
     }
