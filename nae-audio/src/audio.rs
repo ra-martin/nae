@@ -6,11 +6,11 @@ use rodio::{Device, Sink, Source};
 use std::io::Cursor;
 use std::sync::Arc;
 
-pub struct Audio {
+pub struct AudioSource {
     pub(crate) source: Arc<[u8]>,
 }
 
-impl Audio {
+impl AudioSource {
     /// Create a new texture from bytes
     pub fn from_bytes<T, S>(app: &mut T, data: &[u8]) -> Result<Self, String>
     where
@@ -25,40 +25,97 @@ impl Audio {
     }
 }
 
-pub struct Sound {
+pub struct Audio {
     source: Arc<[u8]>,
-    sink: Sink,
+    sink: Option<Sink>,
+    device: Arc<Device>,
 
-    playing: bool,
+    volume: f32,
 }
 
-impl Sound {
-    pub(crate) fn new(ctx: &AudioContext, audio: &Audio) -> Result<Self, String> {
-        let sink = Sink::new(&ctx.device);
+impl Audio {
+    pub(crate) fn new(ctx: &AudioContext, audio: &AudioSource) -> Self {
         let source = audio.source.clone();
 
-        Ok(Self {
+        Self {
             source,
-            sink,
-
-            playing: false,
-        })
+            device: ctx.device.clone(),
+            sink: None,
+            volume: 1.0,
+        }
     }
 
+    /// Play or resume the audio
     pub fn play(&mut self) {
-        if self.playing {
+        if self.is_playing() {
             return;
         }
-        self.sink.append(decoder(self.source.clone()).unwrap());
-        self.sink.play();
+
+        if self.is_paused() {
+            if let Some(sink) = &self.sink {
+                sink.play();
+            }
+
+            return;
+        }
+
+        let sink = Sink::new(&self.device);
+        sink.append(decoder(self.source.clone()).unwrap());
+        sink.set_volume(self.volume);
+        sink.play();
+        self.sink = Some(sink);
     }
 
+    /// Stops the audio
     pub fn stop(&mut self) {
-        self.sink.stop();
-        self.playing = false;
+        if let Some(sink) = &self.sink.take() {
+            sink.stop();
+        }
     }
+
+    /// Returns if the audio is currently playing
+    pub fn is_playing(&self) -> bool {
+        self.sink.as_ref().map_or(false, |sink| sink.len() != 0)
+    }
+
+    /// Pause the audio
+    pub fn pause(&mut self) {
+        if let Some(sink) = &self.sink {
+            sink.pause();
+        }
+    }
+
+    /// Returns if the audio is paused
+    pub fn is_paused(&self) -> bool {
+        self.sink.as_ref().map_or(false, |sink| sink.is_paused())
+    }
+
+    pub fn volume(&self) -> f32 {
+        self.volume
+    }
+
+    pub fn set_volume(&mut self, value: f32) {
+        self.volume = clamp(value, 0.0, 1.0);
+        if let Some(sink) = &self.sink {
+            sink.set_volume(self.volume);
+        }
+    }
+
+    //TODO loop, repeat, etc...
 }
 
+#[inline]
 pub(crate) fn decoder(source: Arc<[u8]>) -> Result<Decoder<Cursor<Arc<[u8]>>>, String> {
     Decoder::new(Cursor::new(source.clone())).map_err(|err| err.to_string())
+}
+
+#[inline]
+fn clamp(value: f32, min: f32, max: f32) -> f32 {
+    if value < min {
+        min
+    } else if value > max {
+        max
+    } else {
+        value
+    }
 }
