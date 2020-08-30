@@ -1,7 +1,7 @@
 use nae_core::{
     BaseGfx, BasePipeline, BlendMode, ClearOptions, Color, CompareMode, DrawUsage, Geometry,
     GraphicsAPI, HorizontalAlign, PipelineOptions, Resource, StencilAction, StencilOptions,
-    VerticalAlign,
+    TextAlign, VerticalAlign,
 };
 
 use crate::batchers::{BaseBatcher, ColorBatcher, ImageBatcher, PatternBatcher, TextBatcher};
@@ -104,6 +104,11 @@ impl Draw {
             projection(width, height, self.gfx.render_target.is_some(), self.dpi);
     }
 
+    pub fn align_text_to(&mut self, align: TextAlign) {
+        let (va, ha) = align.get_align();
+        self.set_text_align(ha, va);
+    }
+
     pub fn set_text_align(&mut self, horizontal: HorizontalAlign, vertical: VerticalAlign) {
         self.text_horizontal_align = horizontal;
         self.text_vertical_align = vertical;
@@ -183,12 +188,7 @@ impl Draw {
         let m2 = matrix4_rotation_z(angle);
         let m3 = matrix4_translate(x * -1.0, y * -1.0, 0.0);
 
-        self.push(
-            &matrix4_mul_matrix4(
-                &matrix4_mul_matrix4(&m1, &m2),
-                &m3
-            )
-        );
+        self.push(&matrix4_mul_matrix4(&matrix4_mul_matrix4(&m1, &m2), &m3));
     }
 
     pub fn push_rotation(&mut self, angle: f32) {

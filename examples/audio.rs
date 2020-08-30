@@ -2,39 +2,40 @@ use nae::prelude::*;
 
 struct State {
     ctx: AudioContext,
-    snd1: Audio,
-    snd2: Audio,
-    dt: f32
+    audio: Audio,
+    fnt: Font,
+    dt: f32,
 }
 
 #[nae::main]
 fn main() {
     nae::init_with(|app| State {
+        fnt: Font::from_bytes(app, include_bytes!("./assets/Ubuntu-B.ttf")).unwrap(),
         ctx: AudioContext::new().unwrap(),
-        snd1: Audio::from_bytes(app, include_bytes!("./assets/engine3.ogg")).unwrap(),
-        snd2: Audio::from_bytes(app, include_bytes!("./assets/fireEffect.mp3")).unwrap(),
-        dt: 0.0
+        audio: Audio::from_bytes(app, include_bytes!("./assets/engine3.ogg")).unwrap(),
+        dt: 0.0,
     })
-        .draw(draw)
-        .build()
-        .unwrap();
+    .draw(draw)
+    .build()
+    .unwrap();
 }
 
 fn draw(app: &mut App, state: &mut State) {
     state.dt += app.delta;
 
     if app.keyboard.was_pressed(KeyCode::Space) {
-        state.ctx.play(&mut state.snd1);
-    }
-    if app.keyboard.was_pressed(KeyCode::A) {
-        state.ctx.stop(&mut state.snd1);
+        state.ctx.play(&state.audio);
     }
 
     let draw = app.draw();
     draw.begin(Color::new(0.1, 0.2, 0.3, 1.0));
-    draw.color = Color::GREEN;
-    draw.push_rotation_from(state.dt, 400.0, 300.0);
-    draw.triangle(400.0, 100.0, 100.0, 500.0, 700.0, 500.0);
-    draw.pop();
+    draw.align_text_to(TextAlign::Center);
+    draw.text(
+        &state.fnt,
+        "Press SPACE to start the audio",
+        400.0,
+        300.0,
+        40.0,
+    );
     draw.end();
 }

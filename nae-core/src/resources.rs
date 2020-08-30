@@ -15,6 +15,40 @@ pub enum TextureFilter {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum TextAlign {
+    TopLeft,
+    TopCenter,
+    TopRight,
+
+    MiddleLeft,
+    Center,
+    MiddleRight,
+
+    BottomLeft,
+    BottomCenter,
+    BottomRight,
+}
+
+impl TextAlign {
+    pub fn get_align(&self) -> (VerticalAlign, HorizontalAlign) {
+        use TextAlign::*;
+        match self {
+            TopLeft => (VerticalAlign::Top, HorizontalAlign::Left),
+            TopCenter => (VerticalAlign::Top, HorizontalAlign::Center),
+            TopRight => (VerticalAlign::Top, HorizontalAlign::Right),
+
+            MiddleLeft => (VerticalAlign::Center, HorizontalAlign::Left),
+            Center => (VerticalAlign::Center, HorizontalAlign::Center),
+            MiddleRight => (VerticalAlign::Center, HorizontalAlign::Right),
+
+            BottomLeft => (VerticalAlign::Bottom, HorizontalAlign::Left),
+            BottomCenter => (VerticalAlign::Bottom, HorizontalAlign::Center),
+            BottomRight => (VerticalAlign::Bottom, HorizontalAlign::Right),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum HorizontalAlign {
     Left,
     Center,
