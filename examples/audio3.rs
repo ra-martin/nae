@@ -33,6 +33,24 @@ fn draw(app: &mut App, state: &mut State) {
         }
     }
 
+    if let Some(snd) = &mut state.snd {
+        if app.keyboard.is_down(KeyCode::Q) {
+            snd.set_volume(snd.volume() - app.delta);
+        }
+
+        if app.keyboard.is_down(KeyCode::A) {
+            snd.set_volume(snd.volume() + app.delta);
+        }
+    }
+
+    if app.keyboard.is_down(KeyCode::W) {
+        state.ctx.set_volume(state.ctx.volume() - app.delta);
+    }
+
+    if app.keyboard.is_down(KeyCode::S) {
+        state.ctx.set_volume(state.ctx.volume() + app.delta);
+    }
+
     let draw = app.draw();
     draw.begin(Color::new(0.1, 0.2, 0.3, 1.0));
     draw.align_text_to(TextAlign::Center);
@@ -42,6 +60,23 @@ fn draw(app: &mut App, state: &mut State) {
         400.0,
         300.0,
         40.0,
+    );
+    draw.text(
+        &state.fnt,
+        &format!(
+            "Audio Volume: {}",
+            state.snd.as_ref().map_or(1.0, |snd| snd.volume())
+        ),
+        400.0,
+        380.0,
+        20.0,
+    );
+    draw.text(
+        &state.fnt,
+        &format!("Global Volume: {}", state.ctx.volume()),
+        400.0,
+        450.0,
+        20.0,
     );
     draw.end();
 }

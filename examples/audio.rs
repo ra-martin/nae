@@ -19,6 +19,8 @@ fn main() {
 }
 
 fn draw(app: &mut App, state: &mut State) {
+    state.ctx.tick();
+
     if app.keyboard.was_pressed(KeyCode::Space) {
         state.ctx.play(&state.audio);
     }
